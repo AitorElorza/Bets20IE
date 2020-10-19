@@ -1,7 +1,6 @@
-package dataAccess;
+package test.dataAccess;
 
-import static org.junit.Assert.*;
-
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,19 +8,12 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import configuration.ConfigXML;
-import domain.Admin;
-import domain.User;
+import domain.Event;
 
 public class TestDataAccess {
-	private User e = new User("erabiltzaile","erabiltzaile");
-	
 	protected  EntityManager  db;
 	protected  EntityManagerFactory emf;
-	
 
 	ConfigXML  c=ConfigXML.getInstance();
 
@@ -31,9 +23,9 @@ public class TestDataAccess {
 		System.out.println("Creating TestDataAccess instance");
 
 		open();
-		
 
 	}
+
 
 	public void open(){
 
@@ -52,7 +44,6 @@ public class TestDataAccess {
 			emf = Persistence.createEntityManagerFactory("objectdb://"+c.getDatabaseNode()+":"+c.getDatabasePort()+"/"+fileName, properties);
 
 			db = emf.createEntityManager();
-			
 		}
 
 	}
@@ -60,23 +51,31 @@ public class TestDataAccess {
 		db.close();
 		System.out.println("DataBase closed");
 	}
-	
-	private void register() {
+
+	public boolean removeEvent(Event ev) {
+		System.out.println(">> DataAccessTest: removeEvent");
+		Event e = db.find(Event.class, ev.getEventNumber());
+		if (e!=null) {
+			db.getTransaction().begin();
+			db.remove(e);
+			db.getTransaction().commit();
+			return true;
+		} else 
+			return false;
+	}
+
+	public Event addEvent(String desc, Date d) {
+		System.out.println(">> DataAccessTest: addEvent");
+		Event ev=null;
 		db.getTransaction().begin();
-		db.persist(e);
-		db.getTransaction().commit();
+		try {
+			ev=new Event(desc,d);
+			db.persist(ev);
+			db.getTransaction().commit();
+		}
+		catch (Exception e){
+			e.printStackTrace();
+		}
+		return ev;
 	}
-	
-
-
-
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-	}
-
-	@Test
-	public void test() {
-		fail("Not yet implemented");
-	}
-
 }
