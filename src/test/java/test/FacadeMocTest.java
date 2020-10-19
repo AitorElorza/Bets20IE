@@ -27,6 +27,7 @@ public class FacadeMocTest {
 	@Test
 	public void test1() {
 		try {
+			Mockito.doReturn(false).when(dataAccess).LogIn(null,Mockito.anyString());
 			emaitza =sut.logIN(null, "erabiltzaile");
 			assertTrue(!emaitza);
 		}catch(Exception e) {
@@ -38,7 +39,9 @@ public class FacadeMocTest {
 	@Test
 	public void test2() {
 		try {
+			Mockito.doReturn(false).when(dataAccess).LogIn(Mockito.anyString(),null);
 			emaitza = sut.logIN("erabiltzaile",null);
+			
 			assertTrue(!emaitza);
 		}catch(Exception e) {
 			fail();
@@ -51,6 +54,7 @@ public class FacadeMocTest {
 	@Test
 	public void test3() {
 		try {
+			Mockito.doReturn(false).when(dataAccess).LogIn(Mockito.anyString(),Mockito.anyString());
 			emaitza =sut.logIN("", "");
 			assertTrue(!emaitza);
 		}catch(Exception e) {
@@ -61,6 +65,7 @@ public class FacadeMocTest {
 	@Test
 	public void test4() {
 		try {
+			Mockito.doReturn(false).when(dataAccess).LogIn(Mockito.anyString(),Mockito.anyString());
 			emaitza =sut.logIN("erabiltzaile", "");
 			assertTrue(!emaitza);
 		}catch(Exception e) {
@@ -71,7 +76,7 @@ public class FacadeMocTest {
 	@Test
 	public void test5() {
 		try {
-			//sut.register("Erabiltzaile", "Erabiltzaile");
+			Mockito.doReturn(true).when(dataAccess).LogIn("erabiltzaile","erabiltzaile");
 			emaitza =sut.logIN("erabiltzaile", "erabiltzaile");
 			assertTrue(emaitza);
 		}catch(Exception e) {

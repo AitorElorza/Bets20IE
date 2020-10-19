@@ -526,3 +526,38 @@ Type domain.Admin is not enhanced.
 [2020-10-19 18:06:46 #11 type] 
 Type domain.MultipleBet is not enhanced.
 
+------------------------------------------------------------------------------------------------------------------------
+
+[2020-10-19 18:48:22 #1 store] 
+Database 'C:\Users\Aitor\git\Bets20IE\src\main\resources\bets.temp' is opened by 5384@DESKTOP-D9HMB1D
+
+[2020-10-19 18:48:22 #2 type] 
+Type domain.Question is not enhanced.
+
+[2020-10-19 18:48:22 #3 type] 
+Type domain.Event is not enhanced.
+
+[2020-10-19 18:48:22 #4 type] 
+Type domain.User is not enhanced.
+
+[2020-10-19 18:48:22 #5 type] 
+Type domain.Kuota is not enhanced.
+
+[2020-10-19 18:48:22 #6 type] 
+Type domain.Registered is not enhanced.
+
+[2020-10-19 18:48:22 #7 type] 
+Type domain.Mugimendua is not enhanced.
+
+[2020-10-19 18:48:22 #8 type] 
+Type domain.MoneyTrans is not enhanced.
+
+[2020-10-19 18:48:22 #9 type] 
+Type domain.Apustua is not enhanced.
+
+[2020-10-19 18:48:22 #10 type] 
+Type domain.Admin is not enhanced.
+
+[2020-10-19 18:48:22 #11 type] 
+Type domain.MultipleBet is not enhanced.
+

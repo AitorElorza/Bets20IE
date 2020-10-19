@@ -332,7 +332,8 @@ public class DataAccess  {
 	}
 
 	public User getUserByName(String usr){
-		return db.find(User.class, usr);
+		User u =db.find(User.class, usr);
+		return u;
 	}
 
 
