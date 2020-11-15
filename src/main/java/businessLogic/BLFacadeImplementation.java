@@ -19,6 +19,8 @@ import domain.Mugimendua;
 import domain.MultipleBet;
 import exceptions.EventFinished;
 import exceptions.QuestionAlreadyExist;
+import iterator.ExtendedIterator;
+import iterator.ExtendedIteratorEvents;
 
 /**
  * It implements the business logic as a web service.
@@ -150,11 +152,21 @@ public class BLFacadeImplementation  implements BLFacade {
 	 * @return collection of events
 	 */
 	@WebMethod	
-	public Vector<Event> getEvents(Date date)  {
+	public Vector<Event> getEvents2(Date date)  {
 		DataAccess dbManager=new DataAccess();
 		Vector<Event>  events=dbManager.getEvents(date);
 		dbManager.close();
 		return events;
+	}
+	
+	@WebMethod
+	public ExtendedIterator getEvents(Date date){
+		DataAccess dbManager =new DataAccess();
+		Vector<Event>  events=dbManager.getEvents(date);
+		dbManager.close();
+		
+		ExtendedIterator it = new ExtendedIteratorEvents(events);
+		return it;
 	}
 
 

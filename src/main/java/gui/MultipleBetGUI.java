@@ -6,6 +6,7 @@ import configuration.UtilDate;
 import com.toedter.calendar.JCalendar;
 
 import domain.Admin;
+import domain.Event;
 import domain.Kuota;
 import domain.Question;
 import javax.swing.*;
@@ -36,7 +37,7 @@ public class MultipleBetGUI extends JFrame {
 	private JScrollPane scrollPaneEvents = new JScrollPane();
 	private JScrollPane scrollPaneQueries = new JScrollPane();
 	private JScrollPane scrollPaneKuotak = new JScrollPane();
-	
+
 
 	private JTable tableEvents= new JTable();
 	private JTable tableQueries = new JTable();
@@ -44,15 +45,15 @@ public class MultipleBetGUI extends JFrame {
 
 	private Vector<Kuota> betList= new Vector<Kuota>();
 	private float minMulBet=0;
-	
+
 	private JLabel lblCount = new JLabel(ResourceBundle.getBundle("Etiquetas").getString("BetN")+" "+betList.size());
-	
+
 	private DefaultTableModel tableModelEvents;
 	private DefaultTableModel tableModelQueries;
 	private DefaultTableModel tableModelKuotak;
 
 	private Integer kuotaForBet;
-	
+
 	private String[] columnNamesEvents = new String[] {
 			ResourceBundle.getBundle("Etiquetas").getString("EventN"), 
 			ResourceBundle.getBundle("Etiquetas").getString("Event"), 
@@ -68,7 +69,7 @@ public class MultipleBetGUI extends JFrame {
 			ResourceBundle.getBundle("Etiquetas").getString("Fee"),
 			ResourceBundle.getBundle("Etiquetas").getString("WinEur")
 	};
-	
+
 	public MultipleBetGUI()
 	{
 		try
@@ -81,7 +82,7 @@ public class MultipleBetGUI extends JFrame {
 		}
 	}
 
-	
+
 	private void jbInit() throws Exception
 	{
 
@@ -96,7 +97,7 @@ public class MultipleBetGUI extends JFrame {
 		this.getContentPane().add(jLabelEventDate, null);
 		this.getContentPane().add(jLabelQueries);
 		this.getContentPane().add(jLabelEvents);
-		
+
 		jButtonClose.setBounds(new Rectangle(856, 393, 130, 30));
 
 		jButtonClose.addActionListener(new ActionListener()
@@ -115,13 +116,13 @@ public class MultipleBetGUI extends JFrame {
 		lblKuotak.setBounds(254, 207, 520, 14);
 		getContentPane().add(lblKuotak);
 
-		
+
 		btnApostua.setBounds(616, 393, 168, 30);
 		getContentPane().add(btnApostua);
-		
+
 		btnApostua.setEnabled(false);
 		btnAdd.setEnabled(false);
-		
+
 		// Code for JCalendar
 		this.jCalendar1.addPropertyChangeListener(new PropertyChangeListener()
 		{
@@ -147,11 +148,22 @@ public class MultipleBetGUI extends JFrame {
 
 						BLFacade facade=MainGUI.getBusinessLogic();
 
-						Vector<domain.Event> events=facade.getEvents(firstDay);
+						//Vector<domain.Event> events = facade.getEvents(firstDay);
+
+						Vector<domain.Event> events = null;
+
+						Iterator it = facade.getEvents(firstDay);
+
+						while(it.hasNext()) {
+							events.add((Event) it.next());
+						}
+
+
+
 
 						if (events.isEmpty() ) jLabelEvents.setText(ResourceBundle.getBundle("Etiquetas").getString("NoEvents")+ ": "+dateformat1.format(calendarMio.getTime()));
 						else jLabelEvents.setText(ResourceBundle.getBundle("Etiquetas").getString("Events")+ ": "+dateformat1.format(calendarMio.getTime()));
-						
+
 						for (domain.Event ev:events){
 							Vector<Object> row = new Vector<Object>();
 
@@ -176,7 +188,7 @@ public class MultipleBetGUI extends JFrame {
 		});
 
 		this.getContentPane().add(jCalendar1, null);
-		
+
 		scrollPaneEvents.setBounds(new Rectangle(254, 39, 352, 150));
 		scrollPaneQueries.setBounds(new Rectangle(616, 39, 370, 150));
 
@@ -209,23 +221,23 @@ public class MultipleBetGUI extends JFrame {
 				tableQueries.getColumnModel().removeColumn(tableQueries.getColumnModel().getColumn(2));
 			}
 		});
-		
-		
+
+
 		tableQueries.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				int j=tableQueries.getSelectedRow();
 				domain.Question q=(domain.Question)tableModelQueries.getValueAt(j, 2);
 				Vector<Kuota> kuotak=q.getKuotak();
-				
+
 				tableModelKuotak.setDataVector(null, columnNamesKuotak);
 				tableModelKuotak.setColumnCount(4);
 				if(kuotak.isEmpty()) lblKuotak.setText("Kuotarik ez: "+q.getQuestion());
 				else lblKuotak.setText("Aukeraturiko galdera: "+q.getQuestion());
-				
+
 				for(domain.Kuota k:kuotak) {
 					Vector<Object> row=new Vector<Object>();
-					
+
 					row.add(k.getKuotaNum());
 					row.add(k.getDesk());
 					row.add(k.getR());
@@ -237,7 +249,7 @@ public class MultipleBetGUI extends JFrame {
 				tableKuotak.getColumnModel().getColumn(2).setPreferredWidth(25);
 				tableKuotak.getColumnModel().removeColumn(tableKuotak.getColumnModel().getColumn(3));
 			}
-			
+
 		});
 
 		tableKuotak.addMouseListener(new MouseAdapter() {
@@ -246,7 +258,7 @@ public class MultipleBetGUI extends JFrame {
 				int j=tableKuotak.getSelectedRow();
 				Integer k=(Integer)tableModelKuotak.getValueAt(j, 0);
 				Kuota kt=(Kuota)tableModelKuotak.getValueAt(j, 3);
-				
+
 				kuotaForBet=k;
 				domain.Event ev = (domain.Event) tableModelEvents.getValueAt(tableEvents.getSelectedRow(), 2);
 				if(!(MainGUI.getBusinessLogic().getErabitltzailea() instanceof Admin) && ev.isCancelled()==false && kt.getResult()==null) {
@@ -254,9 +266,9 @@ public class MultipleBetGUI extends JFrame {
 				}
 				else btnAdd.setEnabled(false);	
 			}
-			
+
 		});	
-		
+
 		scrollPaneEvents.setViewportView(tableEvents);
 		tableModelEvents = new DefaultTableModel(null, columnNamesEvents);
 
@@ -266,12 +278,12 @@ public class MultipleBetGUI extends JFrame {
 		scrollPaneKuotak.setViewportView(tableKuotak);
 		tableModelKuotak= new DefaultTableModel(null, columnNamesKuotak);
 		tableKuotak.setModel(tableModelKuotak);
-		
+
 		tableKuotak.getColumnModel().getColumn(0).setPreferredWidth(25);
 		tableKuotak.getColumnModel().getColumn(1).setPreferredWidth(268);
 		tableKuotak.getColumnModel().getColumn(2).setPreferredWidth(25);
-		
-		
+
+
 
 		scrollPaneQueries.setViewportView(tableQueries);
 		tableModelQueries = new DefaultTableModel(null, columnNamesQueries);
@@ -279,10 +291,10 @@ public class MultipleBetGUI extends JFrame {
 		tableQueries.setModel(tableModelQueries);
 		tableQueries.getColumnModel().getColumn(0).setPreferredWidth(25);
 		tableQueries.getColumnModel().getColumn(1).setPreferredWidth(268);
-		
+
 		this.getContentPane().add(scrollPaneEvents, null);
 		this.getContentPane().add(scrollPaneQueries, null);
-		
+
 		btnApostua.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				BLFacade b = MainGUI.getBusinessLogic();
@@ -291,10 +303,10 @@ public class MultipleBetGUI extends JFrame {
 				b.setMinBet(minMulBet);
 				JFrame a = new BetMulGUI();
 				a.setVisible(true);
-				
+
 			}
 		});
-		
+
 		btnAdd.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				domain.Kuota k=(domain.Kuota)tableModelKuotak.getValueAt(tableKuotak.getSelectedRow(), 3);
@@ -307,18 +319,18 @@ public class MultipleBetGUI extends JFrame {
 				}
 			}
 		});
-		
+
 		//JScrollPane scrollPaneKuotak = new JScrollPane();
 		scrollPaneKuotak.setBounds(254, 232, 530, 150);
 		getContentPane().add(scrollPaneKuotak);
-		
-		
+
+
 		btnAdd.setBounds(254, 393, 140, 30);
 		getContentPane().add(btnAdd);
-	
+
 		lblCount.setBounds(404, 401, 127, 14);
 		getContentPane().add(lblCount);
-		
+
 		JLabel lblNewLabel = new JLabel(" ");
 		lblNewLabel.setIcon(new ImageIcon(MultipleBetGUI.class.getResource("/resources/logo_s.png")));
 		lblNewLabel.setBounds(64, 255, 107, 127);

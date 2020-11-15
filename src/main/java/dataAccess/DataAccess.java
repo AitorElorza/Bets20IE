@@ -365,10 +365,12 @@ public class DataAccess  {
 
 	public void createEvent(Date data, String desk) {
 		//System.out.println(getMaxEvent());
+		
 		Event e = new Event(getMaxEvent()+1,desk, data);
 		db.getTransaction().begin();
 		db.persist(e);
 		db.getTransaction().commit();
+		System.out.println();
 	}
 
 	//	public void createKuota(String desk, Integer r, Question q) {

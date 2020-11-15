@@ -122,8 +122,17 @@ public class CreateQuestionGUI extends JFrame {
 
 					try {
 						BLFacade facade = MainGUI.getBusinessLogic();
-
-						Vector<domain.Event> events = facade.getEvents(firstDay);
+						
+						//Vector<domain.Event> events = facade.getEvents(firstDay);
+						
+						Vector<domain.Event> events = null;
+						
+						Iterator it = facade.getEvents(firstDay);
+						
+						while(it.hasNext()) {
+							events.add((Event) it.next());
+						}
+						
 
 						if (events.isEmpty())
 							jLabelListOfEvents.setText(ResourceBundle.getBundle("Etiquetas").getString("NoEvents")

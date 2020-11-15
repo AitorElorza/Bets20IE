@@ -6,8 +6,11 @@ import configuration.UtilDate;
 import com.toedter.calendar.JCalendar;
 
 import domain.Admin;
+import domain.Event;
 import domain.Kuota;
 import domain.Question;
+import iterator.ExtendedIterator;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -30,7 +33,7 @@ public class ViewKuotakGUI extends JFrame {
 	private JButton btnApostua = new JButton(ResourceBundle.getBundle("Etiquetas").getString("Bet"));
 
 	private final BLFacade b = MainGUI.getBusinessLogic();
-	
+
 	// Code for JCalendar
 	private JCalendar jCalendar1 = new JCalendar();
 	private Calendar calendarMio = null;
@@ -47,7 +50,7 @@ public class ViewKuotakGUI extends JFrame {
 	private DefaultTableModel tableModelKuotak;
 
 	private Integer kuotaForBet;
-	
+
 	private String[] columnNamesEvents = new String[] {
 			ResourceBundle.getBundle("Etiquetas").getString("EventN"), 
 			ResourceBundle.getBundle("Etiquetas").getString("Event"), 
@@ -64,7 +67,7 @@ public class ViewKuotakGUI extends JFrame {
 			ResourceBundle.getBundle("Etiquetas").getString("WinEur")
 	};
 	private final JLabel lblNewLabel = new JLabel(" ");
-	
+
 	public ViewKuotakGUI()
 	{
 		try
@@ -77,7 +80,7 @@ public class ViewKuotakGUI extends JFrame {
 		}
 	}
 
-	
+
 	private void jbInit() throws Exception
 	{
 
@@ -111,12 +114,12 @@ public class ViewKuotakGUI extends JFrame {
 		lblKuotak.setBounds(245, 197, 520, 14);
 		getContentPane().add(lblKuotak);
 
-		
+
 		btnApostua.setBounds(783, 301, 141, 30);
 		getContentPane().add(btnApostua);
-		
+
 		btnApostua.setEnabled(false);
-		
+
 		// Code for JCalendar
 		this.jCalendar1.addPropertyChangeListener(new PropertyChangeListener()
 		{
@@ -142,11 +145,19 @@ public class ViewKuotakGUI extends JFrame {
 
 						BLFacade facade=MainGUI.getBusinessLogic();
 
-						Vector<domain.Event> events=facade.getEvents(firstDay);
-
+						//Vector<domain.Event> events = facade.getEvents(firstDay);
+						
+						Vector<domain.Event> events = null;
+						
+						Iterator it = facade.getEvents(firstDay);
+						
+						while(it.hasNext()) {
+							events.add((Event) it.next());
+						}
+						
 						if (events.isEmpty() ) jLabelEvents.setText(ResourceBundle.getBundle("Etiquetas").getString("NoEvents")+ ": "+dateformat1.format(calendarMio.getTime()));
 						else jLabelEvents.setText(ResourceBundle.getBundle("Etiquetas").getString("Events")+ ": "+dateformat1.format(calendarMio.getTime()));
-						
+
 						for (domain.Event ev:events){
 							Vector<Object> row = new Vector<Object>();
 
@@ -171,7 +182,7 @@ public class ViewKuotakGUI extends JFrame {
 		});
 
 		this.getContentPane().add(jCalendar1, null);
-		
+
 		scrollPaneEvents.setBounds(new Rectangle(245, 36, 311, 150));
 		scrollPaneQueries.setBounds(new Rectangle(573, 36, 351, 150));
 
@@ -202,19 +213,19 @@ public class ViewKuotakGUI extends JFrame {
 				tableQueries.getColumnModel().getColumn(0).setPreferredWidth(25);
 				tableQueries.getColumnModel().getColumn(1).setPreferredWidth(268);
 				tableQueries.getColumnModel().removeColumn(tableQueries.getColumnModel().getColumn(2));
-				
-				
+
+
 				/*int j=tableQueries.getSelectedRow();
 				domain.Question q=(domain.Question)tableModelQueries.getValueAt(j, 2);
 				Vector<Kuota> kuotak=q.getKuotak();
-				
+
 				tableModelKuotak.setDataVector(null, columnNamesKuotak);
 				if(kuotak.isEmpty()) lblKuotak.setText("Kuotarik ez: "+q.getQuestion());
 				else lblKuotak.setText("Aukeraturiko galdera: "+q.getQuestion());
-				
+
 				for(domain.Kuota k:kuotak) {
 					Vector<Object> row=new Vector<Object>();
-					
+
 					row.add(k.getKuotaNum());
 					row.add(k.getDesk());
 					row.add(k.getR());
@@ -222,23 +233,23 @@ public class ViewKuotakGUI extends JFrame {
 				}*/
 			}
 		});
-		
-		
+
+
 		tableQueries.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				int j=tableQueries.getSelectedRow();
 				domain.Question q=(domain.Question)tableModelQueries.getValueAt(j, 2);
 				Vector<Kuota> kuotak=q.getKuotak();
-				
+
 				tableModelKuotak.setDataVector(null, columnNamesKuotak);
 				tableModelKuotak.setColumnCount(4);
 				if(kuotak.isEmpty()) lblKuotak.setText("Kuotarik ez: "+q.getQuestion());
 				else lblKuotak.setText("Aukeraturiko galdera: "+q.getQuestion());
-				
+
 				for(domain.Kuota k:kuotak) {
 					Vector<Object> row=new Vector<Object>();
-					
+
 					row.add(k.getKuotaNum());
 					row.add(k.getDesk());
 					row.add(k.getR());
@@ -249,9 +260,9 @@ public class ViewKuotakGUI extends JFrame {
 				tableKuotak.getColumnModel().getColumn(1).setPreferredWidth(268);
 				tableKuotak.getColumnModel().getColumn(2).setPreferredWidth(25);
 				tableKuotak.getColumnModel().removeColumn(tableKuotak.getColumnModel().getColumn(3));
-				
+
 			}
-			
+
 		});
 
 		tableKuotak.addMouseListener(new MouseAdapter() {
@@ -260,34 +271,34 @@ public class ViewKuotakGUI extends JFrame {
 				int j=tableKuotak.getSelectedRow();
 				Integer k=(Integer)tableModelKuotak.getValueAt(j, 0);
 				Kuota kt=(Kuota)tableModelKuotak.getValueAt(j, 3);
-				
+
 				kuotaForBet=k;
 				domain.Event ev = (domain.Event) tableModelEvents.getValueAt(tableEvents.getSelectedRow(), 2);
 				if(!(MainGUI.getBusinessLogic().getErabitltzailea() instanceof Admin) && ev.isCancelled()==false && kt.getResult()==null) {
 					btnApostua.setEnabled(true);
 				}
 				else btnApostua.setEnabled(false);
-					
+
 			}
-			
+
 		});		
-		
+
 		scrollPaneEvents.setViewportView(tableEvents);
 		tableModelEvents = new DefaultTableModel(null, columnNamesEvents);
 
 		tableEvents.setModel(tableModelEvents);
 		tableEvents.getColumnModel().getColumn(0).setPreferredWidth(25);
 		tableEvents.getColumnModel().getColumn(1).setPreferredWidth(268);
-		
+
 		scrollPaneKuotak.setViewportView(tableKuotak);
 		tableModelKuotak= new DefaultTableModel(null, columnNamesKuotak);
 		tableKuotak.setModel(tableModelKuotak);
-		
+
 		tableKuotak.getColumnModel().getColumn(0).setPreferredWidth(25);
 		tableKuotak.getColumnModel().getColumn(1).setPreferredWidth(268);
 		tableKuotak.getColumnModel().getColumn(2).setPreferredWidth(25);
-		
-		
+
+
 
 		scrollPaneQueries.setViewportView(tableQueries);
 		tableModelQueries = new DefaultTableModel(null, columnNamesQueries);
@@ -298,24 +309,24 @@ public class ViewKuotakGUI extends JFrame {
 
 		this.getContentPane().add(scrollPaneEvents, null);
 		this.getContentPane().add(scrollPaneQueries, null);
-		
+
 		btnApostua.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				b.setKuota(kuotaForBet);
 				JFrame a = new BetGUI();
 				a.setVisible(true);
-				
+
 			}
 		});
-		
-		
-		
+
+
+
 		//JScrollPane scrollPaneKuotak = new JScrollPane();
 		scrollPaneKuotak.setBounds(245, 222, 520, 150);
 		getContentPane().add(scrollPaneKuotak);
 		lblNewLabel.setIcon(new ImageIcon(ViewKuotakGUI.class.getResource("/resources/logo_s.png")));
 		lblNewLabel.setBounds(60, 209, 166, 151);
-		
+
 		getContentPane().add(lblNewLabel);
 
 	}

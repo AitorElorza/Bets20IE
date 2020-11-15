@@ -4,6 +4,8 @@ import businessLogic.BLFacade;
 import configuration.UtilDate;
 
 import com.toedter.calendar.JCalendar;
+
+import domain.Event;
 import domain.Question;
 import javax.swing.*;
 import java.awt.*;
@@ -36,7 +38,7 @@ public class FindQuestionsGUI extends JFrame {
 	private DefaultTableModel tableModelEvents;
 	private DefaultTableModel tableModelQueries;
 
-	
+
 	private String[] columnNamesEvents = new String[] {
 			ResourceBundle.getBundle("Etiquetas").getString("EventN"), 
 			ResourceBundle.getBundle("Etiquetas").getString("Event"), 
@@ -48,7 +50,7 @@ public class FindQuestionsGUI extends JFrame {
 
 	};
 	private final JButton btnNewButton = new JButton(ResourceBundle.getBundle("Etiquetas").getString("FindQuestionsGUI.btnNewButton.text")); //$NON-NLS-1$ //$NON-NLS-2$
-	
+
 	public FindQuestionsGUI()
 	{
 		try
@@ -61,7 +63,7 @@ public class FindQuestionsGUI extends JFrame {
 		}
 	}
 
-	
+
 	private void jbInit() throws Exception
 	{
 
@@ -118,7 +120,16 @@ public class FindQuestionsGUI extends JFrame {
 
 						BLFacade facade=MainGUI.getBusinessLogic();
 
-						Vector<domain.Event> events=facade.getEvents(firstDay);
+						//Vector<domain.Event> events = facade.getEvents(firstDay);
+
+						Vector<domain.Event> events = null;
+
+						Iterator it = facade.getEvents(firstDay);
+
+						while(it.hasNext()) {
+							events.add((Event) it.next());
+						}
+
 
 						if (events.isEmpty() ) jLabelEvents.setText(ResourceBundle.getBundle("Etiquetas").getString("NoEvents")+ ": "+dateformat1.format(calendarMio.getTime()));
 						else jLabelEvents.setText(ResourceBundle.getBundle("Etiquetas").getString("Events")+ ": "+dateformat1.format(calendarMio.getTime()));
@@ -146,7 +157,7 @@ public class FindQuestionsGUI extends JFrame {
 		});
 
 		this.getContentPane().add(jCalendar1, null);
-		
+
 		scrollPaneEvents.setBounds(new Rectangle(292, 50, 346, 150));
 		scrollPaneQueries.setBounds(new Rectangle(138, 274, 406, 116));
 
@@ -198,7 +209,7 @@ public class FindQuestionsGUI extends JFrame {
 			}
 		});
 		btnNewButton.setBounds(138, 419, 112, 30);
-		
+
 		btnNewButton.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
@@ -212,14 +223,14 @@ public class FindQuestionsGUI extends JFrame {
 				dispose();
 			}
 		});
-		
+
 		getContentPane().add(btnNewButton);
-		
+
 		JLabel label = new JLabel(" ");
 		label.setIcon(new ImageIcon(KuotaGUI.class.getResource("/resources/kuotak.jpg")));
 		label.setBounds(0, 0, 684, 461);
 		getContentPane().add(label);
-		
+
 		if(MainGUI.getBusinessLogic().getUsername().equals("admin")) btnNewButton.setVisible(true);
 		else btnNewButton.setVisible(false);
 

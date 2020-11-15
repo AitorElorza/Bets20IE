@@ -10,6 +10,7 @@ import javax.xml.ws.Service;
 
 import configuration.ConfigXML;
 import dataAccess.DataAccess;
+import factory.FacadeFactory;
 import businessLogic.BLFacade;
 import businessLogic.BLFacadeImplementation;
 
@@ -31,6 +32,8 @@ public class ApplicationLauncher {
 
 		LoginGUI a=new LoginGUI();
 		a.setVisible(true);
+		
+		FacadeFactory factory;
 
 
 
@@ -40,13 +43,17 @@ public class ApplicationLauncher {
 			UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsClassicLookAndFeel");
 			UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
 			UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
-
+			
+			factory = new FacadeFactory();
+			
 			if (c.isBusinessLogicLocal()) {
 
 				DataAccess da= new DataAccess(c.getDataBaseOpenMode().equals("initialize"));
+				
+				
 
-
-				appFacadeInterface=new BLFacadeImplementation(da);
+				//appFacadeInterface=new BLFacadeImplementation(da);
+				appFacadeInterface=factory.createBLF(da);
 
 				//appFacadeInterface.register("admin", "admin", "admin");
 				//to insert a new admin must be done here

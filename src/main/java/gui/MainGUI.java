@@ -176,6 +176,17 @@ public class MainGUI extends JFrame {
 			jContentPane.add(btnCreateEvent);
 			jContentPane.add(getLabel());
 			
+			JButton btnMovements = new JButton(ResourceBundle.getBundle("Etiquetas").getString("MainGUI.btnNewButton.text")); //$NON-NLS-1$ //$NON-NLS-2$
+			btnMovements.setBounds(295, 230, 174, 32);
+			jContentPane.add(btnMovements);
+			btnMovements.addActionListener(new ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					JFrame a = new Movements2GUI();
+					a.setVisible(true);
+				}
+			});
+			
+			
 			
 			if(appFacadeInterface.getErabitltzailea() instanceof Admin) {
 				btnCreateEvent.setVisible(true);
